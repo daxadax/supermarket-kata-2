@@ -5,6 +5,6 @@ require 'minitest/spec'
 
 require 'supermarket'
 
-class SuperSpec < Minitest::Test
+class SuperSpec < Minitest::Spec
     
 end
