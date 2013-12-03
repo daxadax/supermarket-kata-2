@@ -12,4 +12,4 @@ In this Kata, my goals were:
 Things that still need work:
 
 * minimize excessive attr_* lists
-* "get_discounts" is messy
+* "get_discounts" is messy #FIXED
