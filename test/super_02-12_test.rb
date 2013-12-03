@@ -67,7 +67,6 @@ class SuperTest < SuperSpec
       junkfood_diet
 
       register.subtotal.must_equal 400
-      register.discounts.must_equal 0
       register.total.must_equal 400
     end
 
@@ -75,7 +74,6 @@ class SuperTest < SuperSpec
       bargain_hunter
 
       register.subtotal.must_equal 2500
-      register.discounts.must_equal 800
       register.total.must_equal 1700
     end
 

@@ -27,12 +27,11 @@ module Supermarket
   end  
   
   class Register
-    attr_reader :specials, :items, :subtotal, :discounts, :total, :name, :price
+    attr_reader :specials, :items, :subtotal, :total, :name, :price
 
     def initialize(*specials)
       @specials = sorted_specials(specials.dup) || []
       @items = {}
-      @discounts = []
     end
 
     def scan(*items)
@@ -40,8 +39,7 @@ module Supermarket
       
       format_items(grouped_items)  # sets `@items`
       cost_before_discounts        # sets `@subtotal`
-      get_discounts                # sets `@discounts` 
-      get_total                    # sets `@total`
+      get_total
 
       print_receipt
     end
@@ -70,25 +68,20 @@ module Supermarket
       @subtotal = @items.map { |name, info| info[:cost] }.inject(:+)
     end
 
+    # http://codereview.stackexchange.com/a/36595/28844
     def get_discounts
-      @items.each do |name, info|
-        count = info[:quantity]
-        @specials.each do |special|
-          while name == special.sale_item && count >= special.quantity
-            @discounts << special.discount
-            count = count - special.quantity
-          end  
-        end  
+      discount = 0
+      @specials.each do |special|
+        if item = @items[special.sale_item]
+          multiples = (item[:quantity] / special.quantity).floor
+          discount += multiples * special.discount
+        end
       end
-      determine_discount
-    end
-
-    def determine_discount
-      @discounts.empty? ? @discounts = 0 : @discounts = @discounts.inject(:+) 
+      return discount
     end
 
     def get_total
-      @total = @subtotal - @discounts
+      @total = @subtotal - get_discounts
     end
 
     def print_receipt
@@ -98,7 +91,7 @@ module Supermarket
         puts "#{item}...#{info[:quantity]}"
       end  
       puts "Subtotal....#{@subtotal}"
-      puts "Discounts...#{@discounts}"
+      puts "Discounts...#{get_discounts}"
       puts "       -------       "
       puts "Total...#{@total}"
     end
